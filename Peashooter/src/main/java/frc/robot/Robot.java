@@ -22,8 +22,7 @@ public class Robot extends TimedRobot {
 
   private Command autonomousCommand; 
   public Robot() {
-
-  
+    
     NamedCommands.registerCommand("Shoot A", shooter.shootA());
     NamedCommands.registerCommand("Shoot B", shooter.shootB());
     NamedCommands.registerCommand("Intake Balls", intake.spinIntakeCommand());
