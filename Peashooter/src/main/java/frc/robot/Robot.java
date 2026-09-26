@@ -20,6 +20,7 @@ public class Robot extends TimedRobot {
   Intake intake = new Intake();
   Shooter shooter = new Shooter();
   CommandXboxController controller = new CommandXboxController(0);
+  //CommandGenericHID controller = new CommandGenericHID(0);
 
   private Command autonomousCommand; 
   public Robot() {
@@ -36,19 +37,21 @@ public class Robot extends TimedRobot {
     drive.setupPathPlanner();
 
     drive.setDefaultCommand(drive.drive(
-        () -> -controller.getLeftX(),
-        () -> controller.getLeftY(),
-        () -> controller.getRightX()
+        () -> MathUtil.applyDeadband(controller.getLeftY(), 0.1),
+        () -> MathUtil.applyDeadband(controller.getLeftX(), 0.1),
+        () -> MathUtil.applyDeadband(controller.getRightX(), 0.1)
       )
     );
+
+    
 
     controller.rightBumper().whileTrue(feeder.load(true));
     controller.leftBumper().whileTrue(feeder.load(false));
     controller.y().onTrue(drive.resetPosition());
     controller.rightTrigger().whileTrue(intake.spinIntakeCommand());
     controller.leftTrigger().whileTrue(intake.reverseIntakeCommand());
-    controller.povUp().onTrue(intake.moveIntakeCommand());
-    controller.povDown().onTrue(intake.moveIntakeCommand());
+    controller.povUp().whileTrue(intake.moveIntakeCommand());
+    controller.povDown().whileTrue(intake.moveIntakeCommand());
     controller.b().whileTrue(shooter.shootB());
     controller.a().whileTrue(shooter.shootA());
     controller.x().whileTrue(shooter.shootX());

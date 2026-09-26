@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.function.DoubleSupplier;
 
+import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -14,10 +16,13 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import swervelib.SwerveDrive;
 import swervelib.parser.SwerveParser;
+import swervelib.telemetry.SwerveDriveTelemetry;
+import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 public class Drive extends SubsystemBase {
     private SwerveDrive swerveDrive;
@@ -31,6 +36,7 @@ public class Drive extends SubsystemBase {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     }
         public void setupPathPlanner() {
 
@@ -81,11 +87,15 @@ public class Drive extends SubsystemBase {
     }
 
     public Command drive(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier rotation) {
+        
+
         return this.run(() -> {
+            SmartDashboard.putNumber("x", translationX.getAsDouble());
+            SmartDashboard.putNumber("y", translationY.getAsDouble());
             swerveDrive.drive(
                 new Translation2d(
-                    translationX.getAsDouble()*5,
-                    translationY.getAsDouble()*5
+                    translationX.getAsDouble(),
+                    translationY.getAsDouble()
                 ),
                 rotation.getAsDouble()*3,
                 fieldR,
