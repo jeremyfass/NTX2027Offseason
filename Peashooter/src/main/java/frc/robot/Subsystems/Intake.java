@@ -52,20 +52,14 @@ public class Intake extends SubsystemBase {
     moveController.setSetpoint(targetPosition, ControlType.kPosition);
   }
 
-  public Command moveIntakeCommand() {
-    return Commands.runOnce(() -> {
-      boolean isUp = Math.abs(targetPosition - INTAKE_UP_POSITION)
-                   < Math.abs(targetPosition - INTAKE_DOWN_POSITION);
-      targetPosition = isUp ? INTAKE_DOWN_POSITION : INTAKE_UP_POSITION;
-    });
+  // Dpad down: deploy the slapdown intake
+  public Command deployIntakeCommand() {
+    return Commands.runOnce(() -> targetPosition = INTAKE_DOWN_POSITION);
   }
 
-    public Command moveDownIntakeCommand() {
-    return Commands.runOnce(() -> {
-      boolean isUp = Math.abs(targetPosition - INTAKE_DOWN_POSITION)
-                   < Math.abs(targetPosition - INTAKE_UP_POSITION);
-      targetPosition = isUp ? INTAKE_UP_POSITION : INTAKE_DOWN_POSITION;
-    });
+  // Dpad up: retract the intake
+  public Command retractIntakeCommand() {
+    return Commands.runOnce(() -> targetPosition = INTAKE_UP_POSITION);
   }
 
   // Intake Balls Command
