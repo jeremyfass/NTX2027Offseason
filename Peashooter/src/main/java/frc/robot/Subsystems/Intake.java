@@ -52,7 +52,7 @@ public class Intake extends SubsystemBase {
     moveController.setSetpoint(targetPosition, ControlType.kPosition);
   }
 
-  public Command moveUpIntakeCommand() {
+  public Command moveIntakeCommand() {
     return Commands.runOnce(() -> {
       boolean isUp = Math.abs(targetPosition - INTAKE_UP_POSITION)
                    < Math.abs(targetPosition - INTAKE_DOWN_POSITION);

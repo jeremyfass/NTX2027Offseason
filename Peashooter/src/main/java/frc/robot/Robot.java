@@ -30,7 +30,7 @@ public class Robot extends TimedRobot {
     NamedCommands.registerCommand("Shoot Tower", shooter.shootB());
     NamedCommands.registerCommand("Intake Balls", intake.spinIntakeCommand());
     NamedCommands.registerCommand("Reverse Intake", intake.reverseIntakeCommand());
-    NamedCommands.registerCommand("Move Intake", intake.moveUpIntakeCommand());
+    NamedCommands.registerCommand("Move Intake", intake.moveIntakeCommand());
     NamedCommands.registerCommand("Load Feeder", feeder.load(true));
     NamedCommands.registerCommand("Unload Feeder", feeder.load(false));
 
@@ -50,8 +50,8 @@ public class Robot extends TimedRobot {
     controller.y().onTrue(drive.resetPosition());
     controller.rightTrigger().whileTrue(intake.spinIntakeCommand());
     controller.leftTrigger().whileTrue(intake.reverseIntakeCommand());
-    controller.povUp().whileTrue(intake.moveUpIntakeCommand());
-    controller.povDown().whileTrue(intake.moveDownIntakeCommand());
+    controller.povUp().whileTrue(intake.moveIntakeCommand());
+    controller.povDown().whileTrue(intake.moveIntakeCommand());
     controller.b().whileTrue(shooter.shootB());
     controller.a().whileTrue(shooter.shootA());
     controller.x().whileTrue(shooter.shootX());
