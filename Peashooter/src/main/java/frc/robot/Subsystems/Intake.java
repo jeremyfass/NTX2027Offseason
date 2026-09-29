@@ -11,13 +11,13 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
 
   private static final double INTAKE_UP_POSITION = 0.0;
-  private static final double INTAKE_DOWN_POSITION = 10.0;
+  private static final double INTAKE_DOWN_POSITION = 17.8;
+  private static final double POSITION_TOLERANCE = 0.5;
 
   // pid
   private static final double kP = 0.1;
@@ -29,7 +29,7 @@ public class Intake extends SubsystemBase {
   // Up down motor
   private final SparkFlex intakeMoveMotor = new SparkFlex(12, MotorType.kBrushless);
   private final SparkClosedLoopController moveController = intakeMoveMotor.getClosedLoopController();
-  private final RelativeEncoder moveEncoder = intakeMoveMotor.getEncoder(); 
+  private final RelativeEncoder moveEncoder = intakeMoveMotor.getEncoder();
 
   // Wheel Motors
   private final SparkFlex intakeSpinMotorOne = new SparkFlex(13, MotorType.kBrushless);
@@ -52,14 +52,22 @@ public class Intake extends SubsystemBase {
     moveController.setSetpoint(targetPosition, ControlType.kPosition);
   }
 
-  // Dpad down: deploy the slapdown intake
-  public Command deployIntakeCommand() {
-    return Commands.runOnce(() -> targetPosition = INTAKE_DOWN_POSITION);
+  public boolean atTarget() {
+    return Math.abs(moveEncoder.getPosition() - targetPosition) < POSITION_TOLERANCE;
   }
 
-  // Dpad up: retract the intake
+  // Dpad down keeps driving until the intake is down
+  public Command deployIntakeCommand() {
+    return this.run(() -> targetPosition = INTAKE_DOWN_POSITION)
+        .until(this::atTarget)
+        .withTimeout(2.0);
+  }
+
+  // Dpad up keeps driving until the intake is up
   public Command retractIntakeCommand() {
-    return Commands.runOnce(() -> targetPosition = INTAKE_UP_POSITION);
+    return this.run(() -> targetPosition = INTAKE_UP_POSITION)
+        .until(this::atTarget)
+        .withTimeout(2.0);
   }
 
   // Intake Balls Command
